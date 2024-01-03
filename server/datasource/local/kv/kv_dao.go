@@ -360,7 +360,7 @@ func (s *Dao) listData(ctx context.Context, project, domain string, options ...d
 		openlog.Info("Use Cache Find Success")
 	}
 
-	result, err := matchLabelsSearchLocally(ctx, domain, project, regex, opts, kvIdsInCache)
+	result, err := matchLabelsSearchLocally(domain, project, regex, opts, kvIdsInCache)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return &model.KVResponse{
@@ -377,7 +377,7 @@ func (s *Dao) listData(ctx context.Context, project, domain string, options ...d
 	return result, opts, nil
 }
 
-func matchLabelsSearchLocally(ctx context.Context, domain, project string, regex *regexp.Regexp, opts datasource.FindOptions, kvIdsInCache []string) (*model.KVResponse, error) {
+func matchLabelsSearchLocally(domain, project string, regex *regexp.Regexp, opts datasource.FindOptions, kvIdsInCache []string) (*model.KVResponse, error) {
 	openlog.Debug("using labels to search kv")
 	kvParentPath := path.Join(file.FileRootPath, domain, project)
 	kvs, err := file.ReadAllKvsFromProjectFolder(kvParentPath)
@@ -406,9 +406,9 @@ func matchLabelsSearchLocally(ctx context.Context, domain, project string, regex
 			continue
 		}
 
-		//if !filterMatch(&doc, opts, regex) {
-		//	continue
-		//}
+		if !filterMatch(&doc, opts, regex) {
+			continue
+		}
 		bytes, _ := json.Marshal(doc)
 		var docDeepCopy model.KVDoc
 		json.Unmarshal(bytes, &docDeepCopy)

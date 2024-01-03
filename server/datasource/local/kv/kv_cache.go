@@ -167,9 +167,9 @@ func (kc *Cache) CacheDelete(kvs []*model.KVDoc) {
 }
 
 func Search(req *CacheSearchReq) (*model.KVResponse, bool, []string) {
-	//if !req.Opts.ExactLabels {
-	//	return nil, false, nil
-	//}
+	if !req.Opts.ExactLabels {
+		return nil, false, nil
+	}
 
 	openlog.Debug(fmt.Sprintf("using cache to search kv, domain %v, project %v, opts %+v", req.Domain, req.Project, *req.Opts))
 	result := &model.KVResponse{
